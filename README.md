@@ -6,8 +6,6 @@ This is a demo project running on Docker, that shows how to configure Tyk Gatewa
 
 <img width="500" src="./img/API-Observability-Dashboards-Grafana.png" />
 
-
-
 ## Deploy and run the demo
 
 1. Clone this repository:
@@ -39,10 +37,15 @@ docker compose up -d
 docker compose run  k6 run /scripts/load.js
 ```
 
-
 5. Check out the dashboard in Grafana
 
 Go to [Grafana](http://localhost:3000/) in your browser (initial user/pwd: admin/admin) and open the dashboard called [*API Observability*](./deployments/grafana/provisioning/dashboards/API-observability.json).
+
+<img width="400" src="./img/API-Observability-Dashboards-Grafana.png" />
+
+The dashboard aggregates the data for all the APIs. You can use the following dropdown to filter per API:
+
+<img width="500" src="./img/API-Observability-select-API.png" />
 
 
 ## Tear down

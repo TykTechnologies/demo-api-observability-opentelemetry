@@ -78,6 +78,7 @@ Configuration:
         - TYK_GW_OPENTELEMETRY_EXPORTER=grpc
         - TYK_GW_OPENTELEMETRY_ENDPOINT=otel-collector:4317
 ```
+  * see also [OpenTelemetry Integration with Tyk Gateway](https://tyk.io/docs/product-stack/tyk-gateway/advanced-configurations/distributed-tracing/open-telemetry/open-telemetry-overview/)
   * is configured to load the API definitions from the ([apps Folder](./deployments/tyk-gateway/apps/))
 * K6 will use the load script [load.js](./deployments/k6/load.js) to generate demo traffic to the API endpoints
 * OpenTelemetry Collector

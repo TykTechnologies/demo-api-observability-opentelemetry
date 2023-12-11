@@ -4,7 +4,7 @@
 
 This is a demo project running on Docker, that shows how to configure Tyk Gateway OSS, OpenTelemetry Collector, Jaeger, Prometheus and Grafana OSS to set-up an API observability dashboard for your APIs managed by Tyk.
 
-
+<img width="500" src="./img/API-Observability-Dashboards-Grafana.png" />
 
 
 

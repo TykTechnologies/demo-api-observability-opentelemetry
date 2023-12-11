@@ -1,0 +1,43 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:4317
+processors:
+  batch:
+  transform:
+    error_mode: ignore
+    metric_statements:
+      - context: datapoint
+        statements:
+          - replace_all_patterns(attributes, "value", "[^a-zA-Z0-9]", "_")
+exporters:
+  otlp:
+    endpoint: jaeger-all-in-one:4317
+    tls:
+      insecure: true
+  prometheus:
+    endpoint: "otel-collector:9464"
+connectors:
+  spanmetrics:
+    histogram:
+      explicit:
+        buckets: [100us, 1ms, 2ms, 6ms, 10ms, 100ms, 250ms]
+    dimensions:
+      - name: http.method
+      - name: http.status_code
+      - name: tyk.api.name
+      - name: tyk.gw.id
+      - name: service.version
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp, spanmetrics]
+    metrics:
+      receivers: [spanmetrics]
+      processors: [transform]
+      exporters: [prometheus]

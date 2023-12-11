@@ -1,0 +1,116 @@
+version: '3.3'
+services:
+  
+  # Tyk Gateway
+  tyk-gateway:
+    image: tykio/tyk-gateway:v5.2.1
+    ports:
+      - 8080:8080
+    networks:
+      - tyk
+    environment:
+        - TYK_GW_OPENTELEMETRY_ENABLED=true
+        - TYK_GW_OPENTELEMETRY_EXPORTER=grpc
+        - TYK_GW_OPENTELEMETRY_ENDPOINT=otel-collector:4317
+    volumes:
+      - ./deployments/tyk-gateway/apps:/opt/tyk-gateway/apps
+      - ./deployments/tyk-gateway/tyk.conf:/opt/tyk-gateway/tyk.conf
+    depends_on:
+      - tyk-redis
+  tyk-redis:
+    image: redis:6.0.4
+    ports:
+      - "6379:6379"
+    volumes:
+      - tyk-redis-data:/data
+    networks:
+      - tyk
+
+  # Demo services
+  go-httpbin:
+    image: mccutchen/go-httpbin:latest
+    ports:
+      - "8081:8080"
+    networks:
+      - tyk
+
+  reservation:
+    image: nodejs-reservation
+    build: ./deployments/reservation 
+    ports:
+      - "8091:8091"
+
+  # Observability stack
+
+  # Jaeger
+  jaeger-all-in-one:
+    image: jaegertracing/all-in-one:latest
+    networks:
+      - tyk
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+
+  # Collector
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    volumes:
+      - ./deployments/otel-collector/otel-collector.yml:/etc/otel-collector.yml
+    command: [ "--config=/etc/otel-collector.yml" ]
+    networks:
+      - tyk
+    ports:
+      - "1888:1888"   # pprof extension
+      - "13133:13133" # health_check extension
+      - "55670:55679" # zpages extension
+      - "4317"          # OTLP over gRPC receiver
+      - "4318:4318"     # OTLP over HTTP receiver
+      - "9464"          # Prometheus exporter
+      - "8888"          # metrics endpoint
+    depends_on:
+      - jaeger-all-in-one
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./deployments/prometheus/:/prometheus
+      - ./data/prometheus:/data
+    command:
+      - '--config.file=/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/data'
+    ports:
+      - "9090:9090"
+    networks:
+      - tyk
+
+  # K6 for load testing
+  k6:
+    image: grafana/k6:latest
+    networks:
+      - tyk
+    ports:
+      - "6565:6565"
+    volumes:
+      - ./deployments/k6/:/scripts
+
+  # Grafana 
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - 3000:3000
+    volumes:
+      - ./deployments/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources/
+      - ./deployments/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards/
+      - ./data/grafana/:/var/lib/grafana
+      - ./deployments/grafana/provisioning/img/tyk-opentelemetry.png:/usr/share/grafana/public/img/tyk-opentelemetry.png
+    networks:
+      - tyk
+      
+
+volumes:
+  tyk-redis-data:
+  grafana-data:
+
+networks:
+  tyk:

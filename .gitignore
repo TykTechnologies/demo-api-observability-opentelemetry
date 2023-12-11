@@ -1,3 +1,3 @@
-.idea
-.idea/
-
+data/*
+deployments/reservation/node_modules/*
+.DS_Store

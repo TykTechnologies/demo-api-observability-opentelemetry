@@ -1,38 +1,61 @@
-# tyk-templates
+# API Observability with OpenTelemetry
 
-This is a Template repo for all your template needs.
-You can use it as a base tempalte to create your new repo or copy basic important files to add to your repo.
+## About
 
-## Current templates in the repo
-
-1. [Contribution guidelines](./CONTRIBUTING.md) 
-2. [PR template](./.github/pull_request_template.md)
-3. [Bug report template](./.github/ISSUE_TEMPLATE/bug_report.md)
-4. [Feature request template](./.github/ISSUE_TEMPLATE/feature_request.md) 
-5. [Contributor License Agreement](https://github.com/TykTechnologies/tyk/blob/master/CLA.md) - This will enforce your contributors to sign the CLA on the first time they submit a PR.
-6. [License](./LICENSE)  *from tyk-gateway*
-7. [Default Repo README](./.github/README-template.md), which resides in `/.github`
+This is a demo project running on Docker, that shows how to configure Tyk Gateway OSS, OpenTelemetry Collector, Jaeger, Prometheus and Grafana OSS to set-up an API observability dashboard for your APIs managed by Tyk.
 
 
-## How to use this repo
-### For a new repo
-  - Create your repository using this repo as a template ([GitHub instruction](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template)).
-  - Rename the file `./.github/README-template.md` to `./.github/README.md` (remove the `-template` part) to get GitHub to display this README
-  - Update `./.github/README.md` with the relevant content for your repo
-
-### For an existing repo
-Please make sure your repo has all the required templates which are defined in the [section below](#current-template-in-the-repo) by simply copying the relevant templates or add content that is in the template but not in your repo files.
 
 
-## Asking users To sign CLA on submitting a pull request (for existing repo)
-For existing repo you can add the feature that ask contributors to sign the CLA on submitting a pull request by copying the [CLA file](.github/workflows/cla.yml) to your `.github/workflows/cla.yml` folder.
+
+## Deploy and run the demo
+
+1. Clone this repository:
+
+```
+git clone https://github.com/SonjaChevre/api-observability-opentelemetry.git
+```
+
+2. Start the services
+
+```
+cd ./api-observability-opentelemetry/
+docker compose up -d
+```
+
+3. Verify that all services are running
+
+- Tyk Gateway - health check runs on [http://localhost:8080/hello](http://localhost:8080/hello)
+- Jaeger runs on [http://localhost:16686/](http://localhost:16686/)
+- Prometheus runs on [http://localhost:9090/](http://localhost:9090/)
+- Grafana OSS runs on [http://localhost:3000/](http://localhost:3000/)
+    - The default log-in at start is admin/admin, once logged in you will be prompted for a new password
+
+4. Generate traffic
+
+[K6](https://k6.io/) is used to generate traffic to the API endpoints. The load script [load.js](./deployments/k6/load.js) will run for 15 minutes.
+
+```
+docker compose run  k6 run /scripts/load.js
+```
 
 
-## Backlog / WIP
-1. Common GitHub workflows you use across all the repo (e.g. spell checker)
-2. Make releases to this repo.
+5. Check out the dashboard in Grafana
+
+Go to [Grafana](http://localhost:3000/) in your browser (initial user/pwd: admin/admin) and open the dashboard called [*API Observability*](./deployments/grafana/provisioning/dashboards/API-observability.json).
 
 
-## Adjustments / Changes / Updates
-Please feel free to submit PRs, bugs and feature request when you think the templates needs fix or improvement.
+## Tear down
+
+Stop the services
+
+```
+docker compose stop
+```
+
+Remove the services
+
+```
+docker compose down
+```
 

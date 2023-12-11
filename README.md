@@ -11,13 +11,13 @@ This is a demo project running on Docker, that shows how to configure Tyk Gatewa
 1. Clone this repository:
 
 ```
-git clone https://github.com/SonjaChevre/api-observability-opentelemetry.git
+git clone https://github.com/TykTechnologies/demo-api-observability-opentelemetry.git
 ```
 
 2. Start the services
 
 ```
-cd ./api-observability-opentelemetry/
+cd ./demo-api-observability-opentelemetry/
 docker compose up -d
 ```
 

@@ -67,3 +67,17 @@ Remove the services
 docker compose down
 ```
 
+## Contribute
+
+You are welcome to contribute by 
+* asking questions / suggesting improvment / reporting issues in this [GitHub project](https://github.com/TykTechnologies/demo-api-observability-opentelemetry/issues) or in the [Tyk Community forum](https://community.tyk.io)
+* making pull request, see the [contributing guide](./CONTRIBUTING.md)
+
+
+## Support, questions & feedback
+
+This is a demo project, using [Tyk Gateway](https://github.com/TykTechnologies/tyk).
+
+For question about our products, please use [Tyk Community forum](https://community.tyk.io/).
+<br />Clients can also use support@tyk.io.
+<br />Potential clients and evaluators, please use info@tyk.io.
